@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
-wget "${REPO}/docker-file.yml.tmpl"
-${GEN} ${SERVICE} docker-file.yml
+wget "${REPO}/docker-compose.yml.tmpl"
+${GEN} ${SERVICE} docker-compose.yml
