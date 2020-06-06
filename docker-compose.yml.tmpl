@@ -1,0 +1,36 @@
+version: "3.3"
+
+services:
+  traefik:
+    image: "traefik:v2.1.3"
+    restart: always
+    command:
+      - --entrypoints.web.address=[{IP_PUBLIC_ADDR}]:80
+      - --entrypoints.websecure.address=[{IP_PUBLIC_ADDR}]:443
+      - --entrypoints.traefik.address={MGMT_URL}:80
+      - --providers.docker
+      - --providers.docker.network=traefik
+      - --providers.docker.exposedByDefault=false
+      - --certificatesresolvers.le.acme.email={EMAIL}
+      - --certificatesresolvers.le.acme.storage=/certs/acme.json
+      - --certificatesresolvers.le.acme.dnsChallenge=true
+      - --certificatesResolvers.le.acme.dnsChallenge.provider=cloudflare
+      - --api.insecure
+    environment:
+      - CF_DNS_API_TOKEN={DNS_TOKEN}
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./certs:/certs"
+    networks:
+      public:
+        ipv6_address: {IP_PUBLIC_ADDR}
+      traefik:
+        ipv6_address: {IP_TRAEFIK_ADDR}
+
+networks:
+  public:
+    external:
+      name: public
+  traefik:
+    external:
+      name: traefik
